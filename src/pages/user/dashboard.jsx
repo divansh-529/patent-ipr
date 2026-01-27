@@ -101,6 +101,59 @@ function DashboardTab({ user }) {
         Manage and track all your intellectual property requests from one place.
       </p>
 
+      {/* START NEW FILING – PREMIUM CTA */}
+<motion.div
+  initial={{ opacity: 0, y: 16 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.45, ease: "easeOut" }}
+  className="mt-8"
+>
+  <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 shadow-[0_30px_80px_rgba(37,99,235,0.35)]">
+
+    {/* Decorative glow */}
+    <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-white/20 blur-3xl" />
+    <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-white/20 blur-3xl" />
+
+    <div className="relative px-8 sm:px-12 py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+      {/* LEFT CONTENT */}
+      <div className="max-w-xl">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-bold text-white mb-4">
+          🚀 Quick Action
+        </div>
+
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+          Start a New Filing
+        </h2>
+
+        <p className="mt-3 text-white/85 text-sm sm:text-base">
+          Submit your request in minutes and track progress effortlessly from your dashboard.
+        </p>
+      </div>
+
+      {/* RIGHT ACTION */}
+      <motion.button
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.96 }}
+        className="group relative px-8 py-4 rounded-2xl bg-white text-blue-700 font-extrabold text-sm sm:text-base shadow-lg hover:shadow-2xl transition-all"
+        onClick={() => {
+          // future backend hook
+          console.log("Start New Filing");
+        }}
+      >
+        <span className="flex items-center gap-2">
+          Start New Filing
+          <span className="transition-transform group-hover:translate-x-1">
+            →
+          </span>
+        </span>
+      </motion.button>
+
+    </div>
+  </div>
+</motion.div>
+
+
       {/* SERVICES */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-8">
         {services.map((s) => (
