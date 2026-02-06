@@ -39,7 +39,7 @@ export default function Landing() {
                 P
               </div>
               <div className="font-extrabold tracking-tight text-slate-900">
-                PatientIPR
+                PatentIPR
               </div>
             </Link>
 
@@ -527,7 +527,7 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <div className="text-slate-900 font-extrabold text-lg">
-                PatientIPR
+                PatentIPR
               </div>
               <p className="mt-2 text-slate-600 text-sm max-w-md">
                 Submit your request, get assistance, and track progress from
@@ -539,7 +539,7 @@ export default function Landing() {
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
-            <div>© {new Date().getFullYear()} PatientIPR. All rights reserved.</div>
+            <div>© {new Date().getFullYear()}PatentIPR. All rights reserved.</div>
             <div className="flex items-center gap-4">
               <span>Privacy</span>
               <span>Terms</span>
