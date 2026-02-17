@@ -199,9 +199,10 @@ animate={{
     <NewFilingView setActiveTab={setActiveTab} />
   )}
 
-  {activeTab === "estimator" && (
-    <div>Estimator coming next...</div>
-  )}
+ {activeTab === "estimator" && (
+  <CostEstimatorView setActiveTab={setActiveTab} />
+)}
+
 
   {activeTab === "messages" && (
     <div>Messages coming next...</div>
@@ -715,3 +716,203 @@ function NewFilingView({ setActiveTab }) {
     </div>
   );
 }
+
+
+
+
+////// cost estimator page
+
+/* ================= COST ESTIMATOR ================= */
+
+function CostEstimatorView({ setActiveTab }) {
+
+  const [selected, setSelected] = React.useState(null);
+  const [addons, setAddons] = React.useState([]);
+
+  const services = {
+    Patent: {
+      govFee: 6600,
+      profFee: 6000,
+      optional: [
+        { name: "Patent Drafting", cost: 8000 },
+        { name: "Prior Art Search", cost: 2000 },
+        { name: "Expedited Examination", cost: 10000 },
+      ],
+    },
+    Trademark: {
+      govFee: 4500,
+      profFee: 5000,
+      optional: [
+        { name: "Logo Search", cost: 3000 },
+        { name: "Opposition Handling", cost: 7000 },
+      ],
+    },
+    Copyright: {
+      govFee: 500,
+      profFee: 3000,
+      optional: [
+        { name: "Expedited Registration", cost: 4000 },
+      ],
+    },
+    Design: {
+      govFee: 1000,
+      profFee: 5000,
+      optional: [
+        { name: "3D Drawing Support", cost: 2500 },
+      ],
+    },
+  };
+
+  const calculateTotal = () => {
+    if (!selected) return 0;
+
+    const base =
+      services[selected].govFee +
+      services[selected].profFee;
+
+    const optionalTotal = addons.reduce(
+      (sum, item) => sum + item.cost,
+      0
+    );
+
+    return base + optionalTotal;
+  };
+
+  const toggleAddon = (addon) => {
+    if (addons.find((a) => a.name === addon.name)) {
+      setAddons(addons.filter((a) => a.name !== addon.name));
+    } else {
+      setAddons([...addons, addon]);
+    }
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-10">
+
+      {/* HEADER */}
+      <div>
+        <h2 className="text-3xl font-semibold text-gray-900">
+          Cost Estimator
+        </h2>
+        <p className="text-gray-500 mt-2">
+          Estimate your intellectual property filing cost
+        </p>
+      </div>
+
+      {/* SERVICE SELECTION */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Object.keys(services).map((service) => (
+          <div
+            key={service}
+            onClick={() => {
+              setSelected(service);
+              setAddons([]);
+            }}
+            className={`cursor-pointer border rounded-2xl p-6 transition ${
+              selected === service
+                ? "border-blue-600 ring-2 ring-blue-100"
+                : "hover:border-gray-400"
+            }`}
+          >
+            <h3 className="font-semibold text-gray-900">
+              {service}
+            </h3>
+            <p className="text-sm text-gray-500 mt-2">
+              Estimate filing cost
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* BREAKDOWN */}
+      {selected && (
+        <div className="bg-white border rounded-3xl shadow-sm p-8 space-y-6">
+
+          <h3 className="text-lg font-semibold text-gray-900">
+            {selected} Fee Breakdown
+          </h3>
+
+          <div className="space-y-3 text-sm">
+            <FeeRow
+              label="Government Fee"
+              value={services[selected].govFee}
+            />
+            <FeeRow
+              label="Professional Fee"
+              value={services[selected].profFee}
+            />
+          </div>
+
+          {/* OPTIONAL SERVICES */}
+          {services[selected].optional.length > 0 && (
+            <div className="pt-6 border-t space-y-4">
+              <h4 className="font-medium text-gray-900">
+                Optional Services
+              </h4>
+
+              {services[selected].optional.map((addon) => (
+                <div
+                  key={addon.name}
+                  className="flex justify-between items-center"
+                >
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      {addon.name}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      ₹{addon.cost}
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={addons.find(
+                      (a) => a.name === addon.name
+                    )}
+                    onChange={() => toggleAddon(addon)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* TOTAL */}
+          <div className="pt-6 border-t flex justify-between items-center">
+            <span className="text-lg font-semibold text-gray-900">
+              Total Estimated Cost
+            </span>
+            <span className="text-xl font-semibold text-blue-600">
+              ₹{calculateTotal()}
+            </span>
+          </div>
+
+          {/* CTA */}
+          <div className="pt-6">
+            <button
+              onClick={() => setActiveTab("new filing")}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition"
+            >
+              Start Filing
+            </button>
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+/* ================= FEE ROW ================= */
+
+function FeeRow({ label, value }) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-gray-600">{label}</span>
+      <span className="text-gray-900 font-medium">
+        ₹{value}
+      </span>
+    </div>
+  );
+}
+
