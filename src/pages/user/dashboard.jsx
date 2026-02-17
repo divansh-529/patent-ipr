@@ -185,11 +185,38 @@ animate={{
   <PortfolioView setActiveTab={setActiveTab} />
 )}
 
-{activeTab !== "dashboard" && activeTab !== "portfolio" && (
-  <div className="text-gray-500 text-lg">
-    {activeTab} page coming soon...
-  </div>
-)}
+<main className="flex-1 overflow-y-auto p-10">
+
+  {activeTab === "dashboard" && (
+    <DashboardView setActiveTab={setActiveTab} />
+  )}
+
+  {activeTab === "portfolio" && (
+    <PortfolioView setActiveTab={setActiveTab} />
+  )}
+
+  {activeTab === "new filing" && (
+    <NewFilingView setActiveTab={setActiveTab} />
+  )}
+
+  {activeTab === "estimator" && (
+    <div>Estimator coming next...</div>
+  )}
+
+  {activeTab === "messages" && (
+    <div>Messages coming next...</div>
+  )}
+
+  {activeTab === "calendar" && (
+    <div>Calendar coming next...</div>
+  )}
+
+  {activeTab === "settings" && (
+    <div>Settings coming next...</div>
+  )}
+
+</main>
+
 
 
         </main>
@@ -470,6 +497,221 @@ function PortfolioStat({ title, value }) {
       <h4 className="text-lg font-semibold text-gray-900 mt-1">
         {value}
       </h4>
+    </div>
+  );
+}
+
+
+
+//// new filing page
+
+
+/* ================= NEW FILING ================= */
+
+function NewFilingView({ setActiveTab }) {
+
+  const [step, setStep] = React.useState(1);
+  const [selectedService, setSelectedService] = React.useState(null);
+  const [formData, setFormData] = React.useState({
+    title: "",
+    field: "",
+    shortDesc: "",
+    detailedDesc: "",
+    file: null,
+  });
+  const [submitted, setSubmitted] = React.useState(false);
+  const [referenceNo, setReferenceNo] = React.useState("");
+
+  const services = [
+    { key: "Patent", desc: "Protect technical inventions" },
+    { key: "Trademark", desc: "Protect brand identity" },
+    { key: "Copyright", desc: "Protect creative works" },
+    { key: "Design", desc: "Protect product appearance" },
+  ];
+
+  const generateReference = () => {
+    return "IPR-" + Math.floor(100000 + Math.random() * 900000);
+  };
+
+  const handleSubmit = () => {
+    const ref = generateReference();
+    setReferenceNo(ref);
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <div className="max-w-2xl mx-auto text-center space-y-6">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 text-2xl">
+          ✓
+        </div>
+
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Filing Submitted Successfully
+        </h2>
+
+        <p className="text-gray-500">
+          Reference Number: <span className="font-medium text-gray-900">{referenceNo}</span>
+        </p>
+
+        <button
+          onClick={() => setActiveTab("dashboard")}
+          className="bg-blue-600 text-white px-6 py-3 rounded-xl"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-10">
+
+      {/* STEP INDICATOR */}
+      <div className="flex items-center justify-between text-sm">
+        {["Service", "Details", "Review"].map((label, index) => (
+          <div
+            key={index}
+            className={`flex-1 text-center pb-3 border-b-2 ${
+              step === index + 1
+                ? "border-blue-600 text-blue-600 font-medium"
+                : "border-gray-200 text-gray-400"
+            }`}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+
+      {/* STEP 1 */}
+      {step === 1 && (
+        <div className="grid sm:grid-cols-2 gap-6">
+          {services.map((service) => (
+            <div
+              key={service.key}
+              onClick={() => setSelectedService(service.key)}
+              className={`border rounded-2xl p-6 cursor-pointer transition ${
+                selectedService === service.key
+                  ? "border-blue-600 ring-2 ring-blue-100"
+                  : "hover:border-gray-400"
+              }`}
+            >
+              <h3 className="font-semibold text-gray-900">
+                {service.key}
+              </h3>
+              <p className="text-sm text-gray-500 mt-2">
+                {service.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* STEP 2 */}
+      {step === 2 && (
+        <div className="space-y-6">
+
+          <input
+            type="text"
+            placeholder="Project Title"
+            className="w-full border rounded-xl px-4 py-3"
+            value={formData.title}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+          />
+
+          <select
+            className="w-full border rounded-xl px-4 py-3"
+            value={formData.field}
+            onChange={(e) =>
+              setFormData({ ...formData, field: e.target.value })
+            }
+          >
+            <option value="">Select Field</option>
+            <option>Technology</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Energy</option>
+          </select>
+
+          <textarea
+            placeholder="Short Description"
+            className="w-full border rounded-xl px-4 py-3"
+            rows={3}
+            value={formData.shortDesc}
+            onChange={(e) =>
+              setFormData({ ...formData, shortDesc: e.target.value })
+            }
+          />
+
+          <textarea
+            placeholder="Detailed Description"
+            className="w-full border rounded-xl px-4 py-3"
+            rows={5}
+            value={formData.detailedDesc}
+            onChange={(e) =>
+              setFormData({ ...formData, detailedDesc: e.target.value })
+            }
+          />
+
+          <input
+            type="file"
+            onChange={(e) =>
+              setFormData({ ...formData, file: e.target.files[0] })
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+        </div>
+      )}
+
+      {/* STEP 3 */}
+      {step === 3 && (
+        <div className="bg-white border rounded-2xl p-8 space-y-4">
+
+          <p><strong>Service:</strong> {selectedService}</p>
+          <p><strong>Title:</strong> {formData.title}</p>
+          <p><strong>Field:</strong> {formData.field}</p>
+          <p><strong>Short Description:</strong> {formData.shortDesc}</p>
+          <p><strong>Detailed Description:</strong> {formData.detailedDesc}</p>
+          <p><strong>Document:</strong> {formData.file ? formData.file.name : "None"}</p>
+
+        </div>
+      )}
+
+      {/* NAVIGATION BUTTONS */}
+      <div className="flex justify-between pt-6">
+
+        {step > 1 ? (
+          <button
+            onClick={() => setStep(step - 1)}
+            className="px-6 py-2 border rounded-xl"
+          >
+            Back
+          </button>
+        ) : (
+          <div />
+        )}
+
+        {step < 3 ? (
+          <button
+            onClick={() => setStep(step + 1)}
+            disabled={step === 1 && !selectedService}
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl disabled:opacity-50"
+          >
+            Continue
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl"
+          >
+            Submit Filing
+          </button>
+        )}
+
+      </div>
+
     </div>
   );
 }
