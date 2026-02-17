@@ -921,15 +921,15 @@ function FeeRow({ label, value }) {
 
 /// calender
 
-
-/* ================= CALENDAR ================= */
+/* ================= PREMIUM CALENDAR ================= */
 
 function CalendarView() {
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
-  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [selectedDate, setSelectedDate] = React.useState(
+    new Date().getDate()
+  );
 
-  // Dummy renewal data
   const renewals = [
     {
       id: 1,
@@ -948,25 +948,27 @@ function CalendarView() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
   const monthNames = [
     "January","February","March","April","May","June",
     "July","August","September","October","November","December"
   ];
 
-  const getRenewalForDate = (day) => {
-    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return renewals.filter(r => r.date === dateString);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const formatDate = (day) => {
+    return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  };
+
+  const getRenewalsForDay = (day) => {
+    return renewals.filter(r => r.date === formatDate(day));
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10">
+    <div className="max-w-6xl mx-auto space-y-8">
 
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-semibold text-gray-900">
+        <h2 className="text-2xl lg:text-3xl font-semibold text-gray-900">
           Renewal Calendar
         </h2>
 
@@ -981,7 +983,7 @@ function CalendarView() {
             ←
           </button>
 
-          <span className="font-medium text-gray-700">
+          <span className="font-medium text-gray-700 text-sm">
             {monthNames[month]} {year}
           </span>
 
@@ -997,97 +999,126 @@ function CalendarView() {
         </div>
       </div>
 
-      {/* LAYOUT */}
-      <div className="grid lg:grid-cols-3 gap-8">
+      {/* ================= DESKTOP GRID ================= */}
+      <div className="hidden lg:block bg-white border rounded-3xl shadow-sm p-6">
 
-        {/* CALENDAR GRID */}
-        <div className="lg:col-span-2 bg-white border rounded-3xl shadow-sm p-6">
-
-          <div className="grid grid-cols-7 text-xs text-gray-500 mb-4">
-            {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
-              <div key={d} className="text-center">{d}</div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-2">
-
-            {Array.from({ length: firstDay }).map((_, i) => (
-              <div key={"empty"+i}></div>
-            ))}
-
-            {Array.from({ length: daysInMonth }).map((_, i) => {
-              const day = i + 1;
-              const dayRenewals = getRenewalForDate(day);
-
-              return (
-                <div
-                  key={day}
-                  onClick={() => setSelectedDate(day)}
-                  className={`cursor-pointer p-3 rounded-xl text-sm text-center transition border ${
-                    selectedDate === day
-                      ? "border-blue-600 bg-blue-50"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  <div>{day}</div>
-
-                  {dayRenewals.length > 0 && (
-                    <div className="mt-1 h-2 w-2 mx-auto rounded-full bg-blue-600"></div>
-                  )}
-                </div>
-              );
-            })}
-
-          </div>
-
+        <div className="grid grid-cols-7 text-xs text-gray-500 mb-4">
+          {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
+            <div key={d} className="text-center">{d}</div>
+          ))}
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className="bg-white border rounded-3xl shadow-sm p-6">
+        <div className="grid grid-cols-7 gap-2">
 
-          <h3 className="font-semibold text-gray-900 mb-4">
-            {selectedDate
-              ? `Renewals on ${selectedDate} ${monthNames[month]}`
-              : "Upcoming Renewals"}
-          </h3>
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const hasRenewal = getRenewalsForDay(day).length > 0;
 
-          <div className="space-y-4 text-sm">
-
-            {renewals.length === 0 && (
-              <p className="text-gray-500">
-                No renewals scheduled.
-              </p>
-            )}
-
-            {renewals.map((item) => (
+            return (
               <div
-                key={item.id}
-                className="border rounded-xl p-4 flex justify-between items-center"
+                key={day}
+                className={`p-4 rounded-xl border text-center transition ${
+                  hasRenewal
+                    ? "border-blue-600 bg-blue-50"
+                    : "hover:bg-gray-50"
+                }`}
               >
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {item.date}
-                  </p>
-                </div>
-
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  item.status === "Urgent"
-                    ? "bg-red-100 text-red-600"
-                    : "bg-blue-100 text-blue-600"
-                }`}>
-                  {item.status}
-                </span>
+                {day}
               </div>
-            ))}
-
-          </div>
+            );
+          })}
 
         </div>
-
       </div>
+
+      {/* ================= MOBILE VIEW ================= */}
+     {/* ================= MOBILE GRID ================= */}
+<div className="lg:hidden bg-white border rounded-3xl shadow-sm p-5">
+
+  {/* Week Days */}
+  <div className="grid grid-cols-7 text-xs text-gray-500 mb-3">
+    {["S","M","T","W","T","F","S"].map((d) => (
+      <div key={d} className="text-center font-medium">
+        {d}
+      </div>
+    ))}
+  </div>
+
+  {/* Dates */}
+  <div className="grid grid-cols-7 gap-2">
+
+    {Array.from({ length: daysInMonth }).map((_, i) => {
+      const day = i + 1;
+      const dayRenewals = getRenewalsForDay(day);
+
+      return (
+        <div
+          key={day}
+          onClick={() => setSelectedDate(day)}
+          className={`h-14 flex flex-col items-center justify-center rounded-xl cursor-pointer transition border ${
+            selectedDate === day
+              ? "bg-blue-600 text-white border-blue-600"
+              : dayRenewals.length > 0
+                ? "bg-blue-50 border-blue-200"
+                : "border-gray-200"
+          }`}
+        >
+          <span className="text-sm font-medium">
+            {day}
+          </span>
+
+          {dayRenewals.length > 0 && (
+            <span className="text-[10px] mt-1 font-medium">
+              {dayRenewals.length} due
+            </span>
+          )}
+        </div>
+      );
+    })}
+
+  </div>
+
+  {/* Renewal List */}
+  <div className="mt-6 space-y-4">
+
+    <h3 className="text-sm font-semibold text-gray-900">
+      Renewals on {selectedDate}
+    </h3>
+
+    {getRenewalsForDay(selectedDate).length === 0 && (
+      <p className="text-sm text-gray-500">
+        No renewals scheduled.
+      </p>
+    )}
+
+    {getRenewalsForDay(selectedDate).map((item) => (
+      <div
+        key={item.id}
+        className="border rounded-xl p-4 flex justify-between items-center"
+      >
+        <div>
+          <p className="font-medium text-gray-900 text-sm">
+            {item.name}
+          </p>
+          <p className="text-xs text-gray-500">
+            {item.date}
+          </p>
+        </div>
+
+        <span className={`text-xs px-2 py-1 rounded-full ${
+          item.status === "Urgent"
+            ? "bg-red-100 text-red-600"
+            : "bg-blue-100 text-blue-600"
+        }`}>
+          {item.status}
+        </span>
+      </div>
+    ))}
+
+  </div>
+
+</div>
+
 
     </div>
   );
