@@ -17,17 +17,16 @@ export default function EnterpriseApp() {
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex">
+    <div className="h-screen bg-[#F5F7FA] flex overflow-hidden">
 
       {/* ================= SIDEBAR ================= */}
-
       <motion.aside
         animate={{ width: sidebarOpen ? 260 : 80 }}
         transition={{ duration: 0.25 }}
-        className="bg-white border-r shadow-sm flex flex-col"
+        className="bg-white border-r shadow-sm flex flex-col shrink-0"
       >
         {/* Logo */}
-        <div className="h-20 flex items-center justify-between px-6 border-b">
+        <div className="h-20 flex items-center justify-between px-6 border-b shrink-0">
           {sidebarOpen && (
             <h2 className="text-xl font-semibold text-blue-700">
               PatentIPR
@@ -69,13 +68,11 @@ export default function EnterpriseApp() {
         </nav>
       </motion.aside>
 
-      {/* ================= MAIN CONTENT ================= */}
-
-      <div className="flex-1 flex flex-col">
+      {/* ================= RIGHT PANEL ================= */}
+      <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* ================= HEADER ================= */}
-
-        <header className="h-20 bg-white border-b flex items-center justify-between px-10">
+        <header className="h-20 bg-white border-b flex items-center justify-between px-10 shrink-0">
 
           <div>
             <h1 className="text-xl font-semibold text-gray-900">
@@ -86,92 +83,100 @@ export default function EnterpriseApp() {
             </p>
           </div>
 
-          {/* Right side */}
+          {/* Right Side */}
           <div className="flex items-center gap-6 relative">
 
-            {/* Notification */}
-            <button
-              onClick={() =>
-                setShowNotifications(!showNotifications)
-              }
-              className="text-gray-600 hover:text-gray-900"
+            {/* Notifications */}
+            <div
+              className="relative"
+              onMouseEnter={() => setShowNotifications(true)}
+              onMouseLeave={() => setShowNotifications(false)}
             >
-              🔔
-            </button>
+              <button
+                onClick={() =>
+                  setShowNotifications(!showNotifications)
+                }
+                className="text-gray-600 hover:text-gray-900 transition"
+              >
+                🔔
+              </button>
 
-            <AnimatePresence>
-              {showNotifications && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute right-20 top-14 w-80 bg-white border shadow-xl rounded-2xl p-5"
-                >
-                  <h3 className="font-medium mb-4">
-                    Notifications
-                  </h3>
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute right-0 mt-4 w-80 bg-white border shadow-xl rounded-2xl p-6 z-50"
+                  >
+                    <h3 className="font-semibold mb-4">
+                      Notifications
+                    </h3>
 
-                  <p className="text-sm text-gray-500">
-                    You don’t have any notifications right now.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <p className="text-sm text-gray-500">
+                      You don’t have any notifications right now.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-            {/* Avatar */}
-            <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-medium">
+            {/* Profile Avatar */}
+            <div
+              onClick={() => setActiveTab("settings")}
+              className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-medium cursor-pointer hover:scale-105 transition"
+            >
               {USER.name.charAt(0)}
             </div>
 
           </div>
         </header>
 
-        {/* ================= PAGE CONTENT ================= */}
-
-        <main className="p-10 flex-1">
+        {/* ================= SCROLLABLE CONTENT ================= */}
+        <main className="flex-1 overflow-y-auto p-10">
 
           {activeTab === "dashboard" && (
             <DashboardView setActiveTab={setActiveTab} />
           )}
 
           {activeTab !== "dashboard" && (
-            <div className="text-gray-500">
-              {activeTab} page coming next...
+            <div className="text-gray-500 text-lg">
+              {activeTab} page coming soon...
             </div>
           )}
 
         </main>
+
       </div>
     </div>
   );
 }
 
-/* ================= DASHBOARD VIEW ================= */
+/* ================= DASHBOARD ================= */
 
 function DashboardView({ setActiveTab }) {
+  const totalAssets = 0;
+  const activeFilings = 0;
+  const upcomingRenewals = 0;
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div>
+
       {/* Stats */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
-
-        <StatCard title="Total Assets" value="28" />
-        <StatCard title="Active Filings" value="12" />
-        <StatCard title="Upcoming Renewals" value="3" />
-
+        <StatCard title="Total Assets" value={totalAssets} />
+        <StatCard title="Active Filings" value={activeFilings} />
+        <StatCard title="Upcoming Renewals" value={upcomingRenewals} />
       </div>
 
-      {/* Primary Action Card */}
+      {/* CTA */}
       <div className="rounded-3xl p-10 mb-10 text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg">
-
         <h2 className="text-2xl font-semibold mb-2">
-          Start New Application
+          Start Your First Filing
         </h2>
 
         <p className="mb-6 text-blue-100">
-          Secure your intellectual property today.
+          You don’t have any assets yet. Begin by filing your first intellectual property.
         </p>
 
         <div className="flex gap-4">
@@ -186,64 +191,29 @@ function DashboardView({ setActiveTab }) {
             onClick={() => setActiveTab("estimator")}
             className="border border-white px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition"
           >
-            Estimator
+            Cost Estimator
           </button>
         </div>
-
       </div>
 
-      {/* Lower Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      {/* Empty State Section */}
+      <div className="bg-white border rounded-2xl shadow-sm p-10 text-center">
+        <h3 className="text-lg font-semibold mb-3">
+          No Activity Yet
+        </h3>
+        <p className="text-gray-500 mb-6">
+          Once you start filing applications, your recent activity will appear here.
+        </p>
 
-        {/* Recent Activities */}
-        <div className="lg:col-span-2 bg-white border rounded-2xl shadow-sm p-6">
-
-          <h3 className="font-semibold mb-6">
-            Recent Activities
-          </h3>
-
-          <div className="space-y-4 text-sm">
-            <ActivityItem
-              title="Eco-Friendly Battery System"
-              status="Pending"
-              time="2h ago"
-            />
-            <ActivityItem
-              title="GreenSpark Logo"
-              status="Registered"
-              time="Yesterday"
-            />
-            <ActivityItem
-              title="Solar Grid Algorithm"
-              status="Filed"
-              time="2 days ago"
-            />
-          </div>
-        </div>
-
-        {/* Upcoming Renewals */}
-        <div className="bg-white border rounded-2xl shadow-sm p-6">
-
-          <h3 className="font-semibold mb-6">
-            Upcoming Renewals
-          </h3>
-
-          <div className="text-sm space-y-4">
-            <div>
-              <p className="font-medium">Aura Tech</p>
-              <p className="text-gray-500">26 days left</p>
-            </div>
-
-            <button className="w-full bg-blue-600 text-white py-2 rounded-xl">
-              View Calendar
-            </button>
-          </div>
-
-        </div>
-
+        <button
+          onClick={() => setActiveTab("new filing")}
+          className="bg-blue-600 text-white px-6 py-2 rounded-xl"
+        >
+          Create First Filing
+        </button>
       </div>
 
-    </motion.div>
+    </div>
   );
 }
 
@@ -251,34 +221,11 @@ function DashboardView({ setActiveTab }) {
 
 function StatCard({ title, value }) {
   return (
-    <motion.div
-      whileHover={{ y: -3 }}
-      className="bg-white border rounded-2xl shadow-sm p-6"
-    >
+    <div className="bg-white border rounded-2xl shadow-sm p-6 hover:-translate-y-1 transition">
       <p className="text-gray-500 text-xs">{title}</p>
       <h2 className="text-3xl font-semibold mt-2 text-gray-900">
         {value}
       </h2>
-    </motion.div>
-  );
-}
-
-/* ================= ACTIVITY ITEM ================= */
-
-function ActivityItem({ title, status, time }) {
-  return (
-    <div className="flex justify-between items-center">
-      <div>
-        <p className="font-medium text-gray-900">
-          {title}
-        </p>
-        <p className="text-gray-500 text-xs">
-          {status}
-        </p>
-      </div>
-      <span className="text-gray-400 text-xs">
-        {time}
-      </span>
     </div>
   );
 }
