@@ -186,14 +186,14 @@ animate={{
 )}
 
 <main className="flex-1 overflow-y-auto p-10">
-
+{/* 
   {activeTab === "dashboard" && (
     <DashboardView setActiveTab={setActiveTab} />
   )}
 
   {activeTab === "portfolio" && (
     <PortfolioView setActiveTab={setActiveTab} />
-  )}
+  )} */}
 
   {activeTab === "new filing" && (
     <NewFilingView setActiveTab={setActiveTab} />
